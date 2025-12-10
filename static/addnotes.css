@@ -1,0 +1,35 @@
+/* FORM STYLING */
+    form.note-form{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin-top:24px;
+    }
+    input[type="text"], textarea{
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:8px;
+      padding:10px 14px;
+      color:#e6eef8;
+      font-size:14px;
+      outline:none;
+      resize:none;
+    }
+    input[type="text"]:focus, textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 10px rgba(110,231,183,0.3);
+    }
+    textarea{
+      min-height:120px;
+    }
+    button.submit-btn{
+      background:linear-gradient(90deg,var(--accent),#34d399);
+      border:none;
+      border-radius:8px;
+      color:#022;
+      font-weight:600;
+      padding:10px 16px;
+      cursor:pointer;
+      transition:opacity .2s;
+    }
+    button.submit-btn:hover{opacity:0.9;}

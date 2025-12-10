@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#6ee7b7;
+      --muted:#94a3b8;
+      --danger:#ff6b6b;
+      --glass: rgba(255,255,255,0.03);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        linear-gradient(180deg,#051026 0%, #082033 40%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><rect width="100%" height="100%" fill="%230b1220"/></svg>');
+      color:#e6eef8;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:100%;
+      max-width:480px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 8px 30px rgba(2,6,23,0.7);
+      border-radius:12px;
+      padding:28px;
+      backdrop-filter: blur(6px);
+    }
+    h1{margin:0 0 8px;font-size:20px}
+    p.lead{margin:0 0 20px;color:var(--muted);font-size:13px}
+    form{display:grid;gap:14px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:#ddecf3}
+    .field{
+      position:relative;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    input[type="text"], input[type="email"], input[type="password"]{
+      width:100%;
+      padding:12px 12px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      color:inherit;
+      border-radius:8px;
+      outline:none;
+      font-size:14px;
+      transition:box-shadow .12s, border-color .12s;
+    }
+    input:focus{
+      box-shadow:0 4px 18px rgba(66,153,225,0.12);
+      border-color:rgba(110,231,183,0.9);
+    }
+    .row{display:flex;gap:10px}
+    .small{
+      font-size:12px;color:var(--muted);
+    }
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .error{color:var(--danger);font-size:13px}
+
+    button[type="submit"]{
+      margin-top:6px;
+      padding:12px 14px;
+      background:linear-gradient(90deg,var(--accent),#34d399);
+      color:#022;
+      border:none;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow: 0 6px 18px rgba(16,185,129,0.14);
+    }
+    .meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+    .password-actions{display:flex;gap:8px;align-items:center}
+    .toggle-btn{
+      background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px;font-size:13px;
+    }
+
+    /* strength bar */
+    .strength{
+      height:8px;
+      background:rgba(255,255,255,0.04);
+      border-radius:6px;
+      overflow:hidden;
+    }
+    .strength > i{
+      display:block;height:100%;width:0%;
+      background:linear-gradient(90deg,#ff6b6b,#f6c84c,#6ee7b7);
+      transition:width .18s linear;
+    }
+
+    /* responsive */
+    @media (max-width:520px){
+      .card{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Create an account</h1>
+    <p class="lead">Sign up with a username, email and secure password.</p>
+     {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+     {{ message }}
+    {% endfor %} 
+  {% endif %}
+{% endwith %}
+    <!-- change action to your server endpoint -->
+    <form id="registerForm" action="/register" method="POST" novalidate>
+      <!-- USERNAME -->
+      <div>
+        <label for="username">Username</label>
+        <div class="field">
+          <input id="username" name="username" type="text" autocomplete="username"
+                 minlength="3" maxlength="30" required
+                 pattern="^[A-Za-z0-9._-]{3,30}$"
+                 aria-describedby="usernameHelp usernameError"
+                 placeholder="choose a username" />
+        </div>
+        <div id="usernameHelp" class="hint">3–30 characters. letters, numbers, dot, underscore or hyphen.</div>
+        <div id="usernameError" class="error" aria-live="polite"></div>
+      </div>
+
+      <!-- EMAIL -->
+      <div>
+        <label for="email">Email address</label>
+        <div class="field">
+          <input id="email" name="email" type="email" autocomplete="email"
+                 required aria-describedby="emailError" placeholder="you@example.com" />
+        </div>
+        <div id="emailError" class="error" aria-live="polite"></div>
+      </div>
+
+      <!-- PASSWORD -->
+      <div>
+        <label for="password">Password</label>
+        <div class="field">
+          <input id="password" name="password" type="password" autocomplete="new-password"
+                 required minlength="8" aria-describedby="passwordHelp passwordError" placeholder="Create a password" />
+          <div class="password-actions">
+            <button type="button" id="togglePwd" class="toggle-btn" aria-pressed="false">Show</button>
+          </div>
+        </div>
+        <div class="hint" id="passwordHelp">Min 8 characters — include upper & lower case letters, a number and a symbol for strong security.</div>
+        <div class="strength" aria-hidden="true" style="margin-top:8px">
+          <i id="strengthBar"></i>
+        </div>
+        <div id="passwordError" class="error" aria-live="polite"></div>
+      </div>
+
+      <div class="meta">
+        <small class="small">By signing up you agree to our <a href="#" style="color:var(--accent);text-decoration:none">terms</a>.</small>
+      </div>
+
+      <button type="submit">Create account</button>
+    </form>
+  </main>
+
+  <script>
+    // --- Utilities ---
+    const qs = s => document.querySelector(s);
+    const form = qs('#registerForm');
+    const username = qs('#username');
+    const email = qs('#email');
+    const password = qs('#password');
+    const toggle = qs('#togglePwd');
+    const strengthBar = qs('#strengthBar');
+
+    const usernameError = qs('#usernameError');
+    const emailError = qs('#emailError');
+    const passwordError = qs('#passwordError');
+
+    // Basic password strength scoring
+    function passwordScore(pw){
+      let score = 0;
+      if (!pw) return 0;
+      if (pw.length >= 8) score += 1;
+      if (pw.length >= 12) score += 1;
+      if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score += 1;
+      if (/\d/.test(pw)) score += 1;
+      if (/[^A-Za-z0-9]/.test(pw)) score += 1;
+      return score; // 0..5
+    }
+
+    function updateStrength(){
+      const s = passwordScore(password.value);
+      const pct = Math.round((s/5)*100);
+      strengthBar.style.width = pct + '%';
+      // color gradient progress via background-size trick if desired
+      // update accessible label (optional)
+      password.setAttribute('data-strength', s);
+    }
+
+    // Show/hide password
+    toggle.addEventListener('click', () => {
+      const isPwd = password.type === 'password';
+      password.type = isPwd ? 'text' : 'password';
+      toggle.textContent = isPwd ? 'Hide' : 'Show';
+      toggle.setAttribute('aria-pressed', String(isPwd));
+      password.focus();
+    });
+
+    // Real-time validation helpers
+    function showError(el, msg){
+      el.textContent = msg || '';
+      if (msg) el.previousElementSibling?.querySelector('input')?.setAttribute('aria-invalid','true');
+    }
+    function clearError(el){
+      el.textContent = '';
+      el.previousElementSibling?.querySelector('input')?.removeAttribute('aria-invalid');
+    }
+
+    username.addEventListener('input', () => {
+      clearError(usernameError);
+      const pat = /^[A-Za-z0-9._-]{3,30}$/;
+      if (username.value && !pat.test(username.value)){
+        showError(usernameError, "Invalid characters or length (3–30). Use letters, numbers, ., _ or -");
+      }
+    });
+
+    email.addEventListener('input', () => {
+      clearError(emailError);
+    });
+
+    password.addEventListener('input', () => {
+      clearError(passwordError);
+      updateStrength();
+      if (password.value && password.value.length < 8){
+        showError(passwordError, "Password too short (minimum 8 characters).");
+      }
+    });
+
+    // On submit: final client-side validation then allow the HTTP submit.
+    form.addEventListener('submit', (ev) => {
+      // Clear previous
+      clearError(usernameError); clearError(emailError); clearError(passwordError);
+
+      let valid = true;
+
+      // username check
+      const uname = username.value.trim();
+      const unamePat = /^[A-Za-z0-9._-]{3,30}$/;
+      if (!uname) { showError(usernameError, "Username is required."); valid = false; }
+      else if (!unamePat.test(uname)) { showError(usernameError, "Username must be 3–30 chars: letters, numbers, ., _ or -"); valid = false; }
+
+      // email check (HTML will do basic check but double-check)
+      const mail = email.value.trim();
+      if (!mail) { showError(emailError, "Email is required."); valid = false; }
+      else {
+        // simple email sanity check
+        const emailPat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPat.test(mail)){ showError(emailError, "Enter a valid email address."); valid = false; }
+      }
+
+      // password checks
+      const pw = password.value;
+      if (!pw) { showError(passwordError, "Password is required."); valid = false; }
+      else if (pw.length < 8) { showError(passwordError, "Password must be at least 8 characters."); valid = false; }
+      else {
+        // optional: enforce complexity
+        const hasLower = /[a-z]/.test(pw);
+        const hasUpper = /[A-Z]/.test(pw);
+        const hasDigit = /\d/.test(pw);
+        const hasSym = /[^A-Za-z0-9]/.test(pw);
+        if (!(hasLower && hasUpper && hasDigit && hasSym)){
+          // not mandatory, but provide a warning
+          showError(passwordError, "For stronger security include upper & lower case letters, a number and a symbol.");
+          // you can choose to block submission by setting valid = false; here
+          // valid = false;
+        }
+      }
+
+      if (!valid) {
+        ev.preventDefault();
+        // move focus to first error field
+        const firstErr = form.querySelector('.error:not(:empty)');
+        if (firstErr){
+          const input = firstErr.previousElementSibling?.querySelector('input');
+          if (input) input.focus();
+        }
+      } else {
+        // Allow normal form submission (POST to server).
+        // If you want to submit via fetch/AJAX instead, preventDefault here and implement.
+        // ev.preventDefault();
+        // TODO: implement fetch POST to server endpoint if desired.
+      }
+    });
+
+    // initialize
+    updateStrength();
+  </script>
+</body>
+</html>

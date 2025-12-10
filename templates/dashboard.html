@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  {% block extra_css %}{% endblock %}
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#6ee7b7;
+      --muted:#94a3b8;
+      --danger:#ff6b6b;
+      --glass: rgba(255,255,255,0.03);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        linear-gradient(180deg,#051026 0%, #082033 40%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900"><rect width="100%" height="100%" fill="%230b1220"/></svg>');
+      color:#e6eef8;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    /* NAVBAR */
+    nav{
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 24px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .logo{
+      font-weight:600;
+      font-size:18px;
+      color:var(--accent);
+      letter-spacing:0.5px;
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:24px;
+    }
+
+    .dropdown{
+      position:relative;
+    }
+    .dropdown-btn{
+      background:transparent;
+      border:none;
+      color:#e6eef8;
+      cursor:pointer;
+      font-size:14px;
+      padding:6px 10px;
+      border-radius:6px;
+      transition:background .2s;
+    }
+    .dropdown-btn:hover{
+      background:rgba(255,255,255,0.06);
+    }
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      top:38px;
+      left:0;
+      background:var(--card);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:8px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.5);
+      min-width:160px;
+      z-index:20;
+    }
+    .dropdown-content a{
+      display:block;
+      padding:10px 14px;
+      color:#e6eef8;
+      text-decoration:none;
+      font-size:13px;
+    }
+    .dropdown-content a:hover{
+      background:rgba(255,255,255,0.05);
+      color:var(--accent);
+    }
+    .dropdown:hover .dropdown-content{
+      display:block;
+    }
+
+    .search-box{
+      position:relative;
+    }
+    .search-box input{
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:8px;
+      padding:8px 12px;
+      color:inherit;
+      outline:none;
+      font-size:13px;
+      width:180px;
+      transition:width .3s ease;
+    }
+    .search-box input:focus{
+      width:240px;
+      border-color:rgba(110,231,183,0.9);
+      box-shadow:0 4px 18px rgba(66,153,225,0.12);
+    }
+
+    .logout-btn{
+      background:linear-gradient(90deg,var(--danger),#ff8787);
+      border:none;
+      border-radius:8px;
+      color:#022;
+      font-weight:600;
+      padding:8px 14px;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(255,107,107,0.25);
+      transition:opacity .2s;
+    }
+    .logout-btn:hover{opacity:0.9;}
+
+    /* CONTENT AREA */
+    main{
+      flex:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px;
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04);
+      border-radius:12px;
+      padding:40px;
+      max-width:700px;
+      width:100%;
+      text-align:center;
+      box-shadow:0 8px 30px rgba(2,6,23,0.7);
+      backdrop-filter: blur(6px);
+    }
+    h1{margin:0 0 12px;font-size:22px;}
+    p{color:var(--muted);font-size:14px;}
+
+    @media (max-width:600px){
+      nav{
+        flex-direction:column;
+        gap:8px;
+      }
+      .nav-links{
+        flex-wrap:wrap;
+        justify-content:center;
+      }
+      .search-box input{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">My Dashboard</div>
+    {{session.get('user')}}
+    <div class="nav-links">
+      <!-- NOTES DROPDOWN -->
+      <div class="dropdown">
+        <button class="dropdown-btn">Notes ▾</button>
+        <div class="dropdown-content">
+          <a href="{{url_for('addnotes')}}">Add Notes</a>
+          <a href="{{url_for('viewallnotes')}}">View All Notes</a>
+          <a href="{{url_for('getexceldata')}}">Get Excel</a>
+        </div>
+      </div>
+
+      <!-- FILES DROPDOWN -->
+      <div class="dropdown">
+        <button class="dropdown-btn">Files ▾</button>
+        <div class="dropdown-content">
+          <a href="{{url_for('uploadfile')}}">Upload File</a>
+          <a href="{{url_for('viewallfiles')}}">View All Files</a>
+        </div>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="search-box">
+        <form action="{{url_for('search')}}" method="post">
+          <input type="text" name="q" placeholder="Search..." />
+        </form>
+      </div>
+
+      <!-- LOGOUT -->
+      <a href="{{url_for('logout')}}">
+      <button type="submit" class="logout-btn">Logout</button>
+      </a>
+    </div>
+  </nav>
+ 
+  <main>
+     {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %} 
+        {% endif %}
+        {% endwith %}
+    
+    <div class="card">
+      {% block content %}
+      <h1>Welcome to Your Dashboard</h1>
+      <p>Manage your notes, files, and account all in one place.</p>
+    </div>
+     {% endblock %}
+  </main>
+</body>
+</html>

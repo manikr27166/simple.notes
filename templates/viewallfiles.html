@@ -1,0 +1,36 @@
+{% extends 'dashboard.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{url_for('static',filename='viewfiles.css')}}"/>
+{% endblock %}
+
+{% block content %}
+  <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for note in files_data %}
+          <tr>
+            <td data-label="ID">{{ note[0] }}</td>
+            <td data-label="Title">{{ note[1] }}</td>
+            <td data-label="Date">{{ note[2] }}</td>
+            <td data-label="View"><a href="{{url_for('viewfile',fid=note[0])}}">view</a></td>
+            <td data-label="downloadfiledata"><a href="{{url_for('downloadfile',fid=note[0])}}">Download</a></td>
+            <td data-label="Delete"><a href="{{url_for('deletefile',fid=note[0])}}">Delete</a></td>
+
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">
+              No notes found.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}

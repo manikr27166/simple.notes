@@ -1,0 +1,45 @@
+{% extends "dashboard.html" %}
+{% block extra_css%}
+<link rel="stylesheet" href="{{url_for('static',filename='viewallnotes.css')}}">
+{% endblock %}
+  <!-- ===== MAIN CONTENT ===== -->
+  {% block content %}
+      <h1>Your Notes</h1>
+      <p>All your saved notes are listed below.</p>
+       {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %} 
+        {% endif %}
+        {% endwith %}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in allnotes_data %}
+          <tr>
+            <td data-label="ID">{{i[0]}}</td>
+            <td data-label="Title">{{i[1]}}</td>
+            <td data-label="Date">{{i[2]}}</td>
+            <td data-label="View"><a href="{{url_for('viewnotes',nid=i[0])}}">view</a></td>
+            <td data-label="Update"><a href="{{url_for('updatenotes',nid=i[0])}}">Update</a></td>
+            <td data-label="Delete"><a href="{{url_for('deletenotes',nid=i[0])}}">Delete</a></td>
+
+          </tr>
+          {% endfor %}
+          {% if not allnotes_data%}
+          <tr>
+            <td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">
+              No notes found.
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+{% endblock %}

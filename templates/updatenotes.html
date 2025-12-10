@@ -1,0 +1,14 @@
+{% extends 'dashboard.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{url_for('static',filename='addnotes.css')}}">
+{% endblock %}
+
+  <!-- ===== MAIN CONTENT ===== -->
+      {% block content %}
+      <p>Update title and description below to update your note.</p>
+      <form method="POST" class="note-form">
+        <input type="text" name="title" placeholder="Note Title" value="{{notes_data[1]}}">
+        <textarea name="description" placeholder="Note Description.....">{{notes_data[2]}}</textarea>
+        <button type="submit" class="submit-btn">Update Note</button>
+      </form>
+      {% endblock %}

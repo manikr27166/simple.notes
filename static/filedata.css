@@ -1,0 +1,38 @@
+ .upload-card {
+    text-align: center;
+  }
+
+  .file-upload-box {
+    border: 2px dashed var(--accent);
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
+    background: var(--glass);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.3s;
+  }
+
+  .file-upload-box:hover {
+    background: rgba(110, 231, 183, 0.08);
+    border-color: #a7f3d0;
+  }
+
+  .file-upload-box input[type="file"] {
+    display: none;
+  }
+
+  .upload-btn {
+    margin-top: 16px;
+    background: var(--accent);
+    border: none;
+    color: #022;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+
+  .upload-btn:hover {
+    opacity: 0.9;
+  }
